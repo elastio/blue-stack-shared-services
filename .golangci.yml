@@ -1,0 +1,60 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+  concurrency: 4
+
+linters:
+  # standard: https://golangci-lint.run/docs/linters/#enabled-by-default
+  default: standard
+  enable:
+    - unused
+
+  settings:
+    govet:
+      enable:
+        # Report variable shadowing
+        - shadow
+
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+
+issues:
+  # Fix found issues (if it's supported by the linter).
+  fix: false
+  # Maximum issues count per one linter.
+  max-issues-per-linter: 0
+  # Maximum count of issues with the same text.
+  max-same-issues: 0
+
+formatters:
+  enable:
+    - gofmt
+    - gci
+
+  settings:
+    gofmt:
+      simplify: true
+
+    gci:
+      no-inline-comments: true
+      sections:
+        - standard
+        - default
+        - prefix(github.com/elastio)
+        - blank
+        - dot
+
+output:
+  formats:
+    text:
+      print-linter-name: true
+      print-issued-lines: true
+      colors: true
+
+  sort-order:
+    - linter
+    - severity
+    - file
