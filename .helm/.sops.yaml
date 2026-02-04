@@ -1,0 +1,8 @@
+creation_rules:
+  - path_regex: secrets.develop.*
+    kms: "arn:aws:kms:eu-central-1:781140217053:key/afa527b5-0cee-4e40-9983-a93761f8c299+arn:aws:iam::781140217053:role/kms-role-9qk"
+  - path_regex: secrets.staging.*
+    kms: "arn:aws:kms:eu-central-1:941757078516:key/12758485-bab5-4040-8db2-2bc777d00dc9+arn:aws:iam::941757078516:role/kms-role-hgz"
+  - path_regex: secrets.production.*
+    kms: "arn:aws:kms:eu-central-1:357345993126:key/99aaa92c-eb7f-49fc-8789-aef54a284ae2+arn:aws:iam::357345993126:role/kms-role-474"
+

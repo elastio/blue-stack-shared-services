@@ -1,0 +1,26 @@
+{
+  "master": {
+    "env_type": "develop",
+    "aws_account_id": "937593779230",
+    "name": "blue-stack",
+    "region": "eu-central-1",
+    "dns_name": "development.elastio.us",
+    "cell_hosted_zone_name": "cell.elastio.us"
+  },
+  "staging": {
+    "env_type": "staging",
+    "aws_account_id": "937593779230",
+    "name": "blue-stack",
+    "region": "eu-central-1",
+    "dns_name": "staging.elastio.us",
+    "cell_hosted_zone_name": "cell.elastio.us"
+  },
+  "production": {
+    "env_type": "production",
+    "aws_account_id": "383849438603",
+    "name": "free-tier",
+    "region": "us-east-2",
+    "dns_name": "app.elastio.com",
+    "cell_hosted_zone_name": "cell.elastio.com"
+  }
+}

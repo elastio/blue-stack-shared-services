@@ -1,8 +1,8 @@
 import { deindent } from "@gustavnikolaj/string-utils";
 import { version as ci_version } from "@elastio/ci/package.json";
 import { job, Jobs, step } from "@elastio/ci";
-import { ciImage, defaultRunner } from "./constants";
-import { cache } from "./helper.steps";
+import { aws_bs_resources, ciImage, defaultRunner } from "./constants";
+import { awsCredsStep, cache, exportVersionStep } from "./helper.steps";
 
 export const jobs: Jobs = job.prefixed("🅲 ", {
   typos: {
@@ -68,6 +68,50 @@ export const jobs: Jobs = job.prefixed("🅲 ", {
         run: deindent`
           go mod download
           go build ./...
+        `,
+      },
+    ],
+  },
+
+  "check-image-version": {
+    if: "github.base_ref == 'master' || github.ref == 'refs/heads/master'",
+    "runs-on": defaultRunner,
+    permissions: {
+      contents: "read",
+      "pull-requests": "read",
+      "id-token": "write",
+    },
+    outputs: {
+      has_source_changes: "${{ steps.changed.outputs.verdict }}",
+    },
+    steps: [
+      step.checkout(),
+      exportVersionStep(),
+      awsCredsStep(aws_bs_resources.ro_role_arn, aws_bs_resources.region),
+      {
+        name: "Check source changes",
+        uses: "dorny/paths-filter@v3",
+        id: "changed",
+
+        with: {
+          filters: deindent`
+            verdict: [config/**, internal/**, logger/**, scripts/**, main.go, go.mod, go.sum, .semver.yaml, Dockerfile]
+          `,
+        },
+      },
+      {
+        name: "Check whether image version already exists",
+        if: "steps.changed.outputs.verdict == 'true'",
+        run: deindent`
+          if \
+            aws ecr describe-images \
+              --repository-name development/blues/shared-services/service \
+              --image-ids imageTag=\${{ env.VERSION }} \
+              --region ${aws_bs_resources.region}; \
+          then \
+            echo "Image with tag \${{ env.VERSION }} already exists. Please update version in .semver.yaml."; \
+            exit 1; \
+          fi
         `,
       },
     ],

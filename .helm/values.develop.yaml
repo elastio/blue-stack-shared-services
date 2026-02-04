@@ -1,0 +1,78 @@
+global:
+  cellType: blue-stack
+  serviceName: shared-services
+  serviceComponent: app
+  serviceAccount:
+    create: true
+    name: shared-services-service-account
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::937593779230:role/SharedServices-eu-central-1-develop-blue-stack"
+      eks.amazonaws.com/audience: "sts.amazonaws.com"
+      eks.amazonaws.com/token-expiration: "86400"
+
+  resources:
+    deployment:
+      limits:
+        cpu: null
+        memory: 512Mi
+      requests:
+        cpu: 10m
+        memory: 100Mi
+    istio_proxy:
+      requests:
+        cpu: 10m
+        memory: 100M
+
+  ingress:
+    enabled: false
+
+  hpa:
+    spec:
+      minReplicas: 1
+      maxReplicas: 3
+      metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 80
+
+  deployment:
+    replicas: 1
+    maxUnavailable: 50%
+    revisionHistoryLimit: 3
+    runAsUser: 1000
+    livenessProbe:
+      timeoutSeconds: 2
+      initialDelaySeconds: 5
+      httpGet:
+        path: /healthcheck
+        port: 8080
+    readinessProbe:
+      timeoutSeconds: 2
+      initialDelaySeconds: 5
+      httpGet:
+        path: /healthcheck
+        port: 8080
+    podAnnotations: {}
+  service:
+    type: ClusterIP
+    image: 648105227319.dkr.ecr.us-east-2.amazonaws.com/development/blues/shared-services/service
+    annotations: {}
+
+  appConfig:
+    servers:
+    - name: http-gateway
+      port: 8080
+    # Application environment variables (dotEnv format for backend-node-service chart)
+    dotEnv:
+      # Server configuration
+      HTTP_PORT: "8080"
+      PRODUCTION_MODE: "true"
+
+      # AWS Configuration
+      AWS_REGION: "eu-central-1"
+
+      # Logging Configuration
+      ZAP_LOG_LEVEL: "debug"
