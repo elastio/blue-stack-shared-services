@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   golang-checks:
-    uses: elastio/gh-actions/.github/workflows/golang-checks.yml@main
+    uses: elastio/gh-actions/.github/workflows/golang-checks.yml@master
 
   check-image-version:
     name: Check image version
@@ -144,7 +144,7 @@ jobs:
   deploy-to-k8s:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/production'
     needs: [build-image]
-    uses: elastio/gh-actions/.github/workflows/deploy-to-k8s.yml@main
+    uses: elastio/gh-actions/.github/workflows/deploy-to-k8s.yml@master
     with:
       service-name: shared-services
     secrets:

@@ -35,7 +35,7 @@ jobs:
         run: git fetch --unshallow || git fetch --all
 
       - name: Configure environment
-        uses: elastio/gh-actions/actions/configure-env@main
+        uses: elastio/gh-actions/actions/configure-env@master
 
       - name: Configure promotion environment
         run: |
@@ -121,7 +121,7 @@ jobs:
           skip-logout: "true"
 
       - name: Configure environment
-        uses: elastio/gh-actions/actions/configure-env@main
+        uses: elastio/gh-actions/actions/configure-env@master
 
       - name: Configure registry environment
         run: |
@@ -171,7 +171,7 @@ jobs:
   deploy-to-k8s:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/production'
     needs: [promote-image]
-    uses: elastio/gh-actions/.github/workflows/deploy-to-k8s.yml@main
+    uses: elastio/gh-actions/.github/workflows/deploy-to-k8s.yml@master
     with:
       service-name: shared-services
     secrets:
